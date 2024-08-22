@@ -4,11 +4,6 @@ const path = require("path");
 
 const dataDir = path.join(__dirname, "../data/");
 
-const normalizeKey = (key) => {
-  // Replace spaces with underscores and make sure key is in lower case
-  return key.replace(/\s+/g, '_').toLowerCase();
-};
-
 const scrapeGoogleScholarProfile = async (profileUrl) => {
   try {
     const browser = await puppeteer.launch();
@@ -38,6 +33,11 @@ const scrapeGoogleScholarProfile = async (profileUrl) => {
 
       // Extract detailed publication data
       const publicationDetails = await page.evaluate(() => {
+        const normalizeKey = (key) => {
+          // Replace spaces with underscores and make sure key is in lower case
+          return key.replace(/\s+/g, '_').toLowerCase();
+        };
+
         const details = {};
         const fields = document.querySelectorAll(".gsc_oci_field");
 

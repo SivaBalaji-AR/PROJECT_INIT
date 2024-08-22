@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import './DisplayPapers.css';
+import ExportButton from "./ExportButton";
 
 const DisplayPapers = () => {
   const [scholarData, setScholarData] = useState([]);
@@ -93,6 +94,7 @@ const DisplayPapers = () => {
         <div className="button-container no-print">
           <button onClick={handleDownloadPDF} className="download-button">Download PDF</button>
         </div>
+        <ExportButton data={filteredData}/>
       </div>
 
       <div className="scholar-item-container">
@@ -101,8 +103,8 @@ const DisplayPapers = () => {
             <div key={item.id} className="scholar-item">
               <h4>{item.title}</h4>
               <p><strong>Authors: </strong>{item.authors}</p>
-              <p><strong>Published At: </strong>{item.publicationDate}</p>
-              <p><strong>Publisher: </strong>{item.publisher}</p>
+              <p><strong>Published At: </strong>{item.publication_date}</p>
+              <p><strong>Publisher: </strong>{item.journal}</p>
               <p><strong>Description: </strong>{item.description}</p>
               <a href={item.link} target="_blank" rel="noopener noreferrer" className="modal-link">View Article</a>
 
