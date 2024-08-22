@@ -79,6 +79,17 @@ body {
     text-decoration: underline;
   }
   
+  .modal-link {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .modal-link:hover {
+    text-decoration: underline;
+  }
+  
+  
   /* Layout Styles */
   .scholar-item-container {
     display: flex;
@@ -131,6 +142,33 @@ body {
     background-color: #357ABD;
   }
   
+  /* Add this to your DisplayPapers.css file */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .scholar-item-container {
+    padding: 10px;
+    border: 1px solid #000;
+    margin-bottom: 15px;
+  }
+
+  .scholar-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .scholar-item p {
+    margin: 5px 0;
+  }
+}
+
+
   /* Responsive Design */
   @media (max-width: 768px) {
     .scholar-item {

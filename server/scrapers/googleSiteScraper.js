@@ -4,6 +4,11 @@ const path = require("path");
 
 const dataDir = path.join(__dirname, "../data/");
 
+const normalizeKey = (key) => {
+  // Replace spaces with underscores and make sure key is in lower case
+  return key.replace(/\s+/g, '_').toLowerCase();
+};
+
 const scrapeGoogleScholarProfile = async (profileUrl) => {
   try {
     const browser = await puppeteer.launch();
@@ -33,28 +38,23 @@ const scrapeGoogleScholarProfile = async (profileUrl) => {
 
       // Extract detailed publication data
       const publicationDetails = await page.evaluate(() => {
-        const titleElement = document.querySelector(".gsc_oci_title_link");
-        const title = titleElement?.textContent.trim() || "";
-        const href = titleElement?.href || "";  // Extract the href for the title link
-        const authors = document.querySelectorAll(".gsc_oci_field")[0]?.nextElementSibling.textContent.trim() || "";
-        const publicationDate = document.querySelectorAll(".gsc_oci_field")[1]?.nextElementSibling.textContent.trim() || "";
-        const journal = document.querySelectorAll(".gsc_oci_field")[2]?.nextElementSibling.textContent.trim() || "";
-        const volume = document.querySelectorAll(".gsc_oci_field")[3]?.nextElementSibling.textContent.trim() || "";
-        const pages = document.querySelectorAll(".gsc_oci_field")[4]?.nextElementSibling.textContent.trim() || "";
-        const publisher = document.querySelectorAll(".gsc_oci_field")[5]?.nextElementSibling.textContent.trim() || "";
-        const description = document.querySelector("#gsc_oci_descr")?.textContent.trim() || "";
+        const details = {};
+        const fields = document.querySelectorAll(".gsc_oci_field");
 
-        return {
-          title,
-          href,  // Add the href to the returned object
-          authors,
-          publicationDate,
-          journal,
-          volume,
-          pages,
-          publisher,
-          description,
-        };
+        fields.forEach((field, index) => {
+          const key = normalizeKey(field.textContent.trim());
+          const value = field.nextElementSibling?.textContent.trim() || null;
+          details[key] = value;
+        });
+
+        // Additional extraction for the title and href
+        const titleElement = document.querySelector(".gsc_oci_title_link");
+        if (titleElement) {
+          details.title = titleElement.textContent.trim();
+          details.href = titleElement.href;
+        }
+
+        return details;
       });
 
       publicationDetails.link = fullLink;  // Add the full link to the details

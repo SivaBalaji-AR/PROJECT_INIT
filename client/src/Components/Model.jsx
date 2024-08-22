@@ -1,4 +1,4 @@
-
+import PropTypes from 'prop-types';  // Add PropTypes for validation
 import './Model.css';
 
 const Modal = ({ article, onClose }) => {
@@ -17,6 +17,19 @@ const Modal = ({ article, onClose }) => {
       </div>
     </div>
   );
+};
+
+// PropTypes validation
+Modal.propTypes = {
+  article: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    authors: PropTypes.string.isRequired,
+    publicationDate: PropTypes.string.isRequired,
+    publisher: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    link: PropTypes.string.isRequired,
+  }).isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default Modal;

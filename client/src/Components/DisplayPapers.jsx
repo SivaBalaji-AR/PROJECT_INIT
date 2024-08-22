@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import './DisplayPapers.css';
-import Model from './Model';
-import ExportButton from "./ExportButton";
-
 
 const DisplayPapers = () => {
   const [scholarData, setScholarData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [error, setError] = useState(null);
-  const [startYear, setStartYear] = useState("");
-  const [endYear, setEndYear] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [sortOrder, setSortOrder] = useState("");
-  const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/api/v1/googlescholaruser")
@@ -34,10 +30,10 @@ const DisplayPapers = () => {
 
   const handleFilter = () => {
     const filtered = scholarData.filter((item) => {
-      const itemYear = parseInt(item.year, 10);
-      const start = parseInt(startYear, 10);
-      const end = parseInt(endYear, 10);
-      return itemYear >= start && itemYear <= end;
+      const itemDate = new Date(item.publicationDate);
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      return itemDate >= start && itemDate <= end;
     });
     setFilteredData(filtered);
   };
@@ -45,50 +41,44 @@ const DisplayPapers = () => {
   const handleSort = (order) => {
     setSortOrder(order);
     const sortedData = [...filteredData].sort((a, b) => {
-      const yearA = parseInt(a.year, 10);
-      const yearB = parseInt(b.year, 10);
-      return order === "latest" ? yearB - yearA : yearA - yearB;
+      const dateA = new Date(a.publicationDate);
+      const dateB = new Date(b.publicationDate);
+      return order === "latest" ? dateB - dateA : dateA - dateB;
     });
     setFilteredData(sortedData);
   };
 
-  const generateYearOptions = () => {
-    const currentYear = new Date().getFullYear();
-    const options = [];
-    for (let year = 1900; year <= currentYear; year++) {
-      options.push(<option key={year} value={year}>{year}</option>);
-    }
-    return options;
-  };
 
-  const openModal = (article) => {
-    setSelectedArticle(article);
-  };
 
-  const closeModal = () => {
-    setSelectedArticle(null);
+  const handleDownloadPDF = () => {
+    window.print();
   };
 
   return (
     <div className="container">
       <h1 className="main-title">Google Scholar Data</h1>
-      <ExportButton data={filteredData} filename="data.xlsx" />
 
-      {error && <p className="error">Error: {error}</p>}
+      
 
-      <div className="filter-sort-container">
+      {error && <p className="error no-print">Error: {error}</p>}
+
+      <div className="filter-sort-container no-print">
         <div className="filter-container">
-          <label htmlFor="startYear">Start Year:</label>
-          <select id="startYear" value={startYear} onChange={(e) => setStartYear(e.target.value)}>
-            <option value="">Select Start Year</option>
-            {generateYearOptions()}
-          </select>
+          <label htmlFor="startDate">Start Date:</label>
+          <input
+            type="date"
+            id="startDate"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
 
-          <label htmlFor="endYear">End Year:</label>
-          <select id="endYear" value={endYear} onChange={(e) => setEndYear(e.target.value)}>
-            <option value="">Select End Year</option>
-            {generateYearOptions()}
-          </select>
+          <label htmlFor="endDate">End Date:</label>
+          <input
+            type="date"
+            id="endDate"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
 
           <button onClick={handleFilter}>Filter</button>
         </div>
@@ -100,6 +90,9 @@ const DisplayPapers = () => {
             <option value="earliest">Earliest First</option>
           </select>
         </div>
+        <div className="button-container no-print">
+          <button onClick={handleDownloadPDF} className="download-button">Download PDF</button>
+        </div>
       </div>
 
       <div className="scholar-item-container">
@@ -107,20 +100,20 @@ const DisplayPapers = () => {
           filteredData.map((item) => (
             <div key={item.id} className="scholar-item">
               <h4>{item.title}</h4>
-              <p>Authors: {item.authors}</p>
-              <p>Published At: {item.publicationDate}</p>
-              <p>Publisher: {item.publisher}</p>
-              <p>
-                <button onClick={() => openModal(item)}>Open</button>
-              </p>
+              <p><strong>Authors: </strong>{item.authors}</p>
+              <p><strong>Published At: </strong>{item.publicationDate}</p>
+              <p><strong>Publisher: </strong>{item.publisher}</p>
+              <p><strong>Description: </strong>{item.description}</p>
+              <a href={item.link} target="_blank" rel="noopener noreferrer" className="modal-link">View Article</a>
+
+             
             </div>
           ))
         ) : (
-          <p>No Google Scholar data available for the selected year range</p>
+          <p>No Google Scholar data available for the selected date range</p>
         )}
       </div>
 
-      {selectedArticle && <Model article={selectedArticle} onClose={closeModal} />}
     </div>
   );
 }
