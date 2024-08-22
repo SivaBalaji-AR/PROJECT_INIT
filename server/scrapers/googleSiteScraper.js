@@ -41,7 +41,7 @@ const scrapeGoogleScholarProfile = async (profileUrl) => {
         const details = {};
         const fields = document.querySelectorAll(".gsc_oci_field");
 
-        fields.forEach((field, index) => {
+        fields.forEach((field) => {
           const key = normalizeKey(field.textContent.trim());
           const value = field.nextElementSibling?.textContent.trim() || null;
           details[key] = value;
@@ -68,25 +68,16 @@ const scrapeGoogleScholarProfile = async (profileUrl) => {
     }
 
     // Write data to file
-    fs.writeFile(
+    fs.writeFileSync(
       path.join(dataDir, "googleScholarDetailedData.json"),
-      JSON.stringify(detailedPublications, null, 2),
-      (err) => {
-        if (err) {
-          console.error("Error writing file:", err);
-          return;
-        }
-        console.log("Successfully written detailed data to file");
-      }
+      JSON.stringify(detailedPublications, null, 2)
     );
+    console.log("Successfully written detailed data to file");
 
     await browser.close();
   } catch (error) {
     console.error("Error during scraping:", error);
   }
 };
-
-const profileUrl = 'https://scholar.google.com/citations?hl=en&user=flp93UcAAAAJ';
-scrapeGoogleScholarProfile(profileUrl);
 
 module.exports = scrapeGoogleScholarProfile;

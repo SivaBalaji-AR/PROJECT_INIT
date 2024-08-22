@@ -1,0 +1,138 @@
+/* Global Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Container Styles */
+.web-of-science-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Title Styles */
+.web-of-science-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin: 20px 0;
+  color: #4a90e2;
+}
+
+/* Error Message Styles */
+.web-of-science-error {
+  text-align: center;
+  color: #ff4c4c;
+  background: #f8d7da;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+/* Publication Item Styles */
+.web-of-science-publication-item {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  width: 100%;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover Effect */
+.web-of-science-publication-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Publication Title Styles */
+.web-of-science-publication-title {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Authors, Date, Journal Styles */
+.web-of-science-publication-authors,
+.web-of-science-publication-date,
+.web-of-science-publication-journal {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Link Styles */
+.web-of-science-publication-link {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.web-of-science-publication-link:hover {
+  text-decoration: underline;
+}
+
+/* No Data Message Styles */
+.web-of-science-no-data {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-top: 20px;
+}
+
+/* Export Button Styles */
+.export-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.export-button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.export-button:hover {
+  background: #357ABD;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .web-of-science-publication-item {
+      margin: 10px;
+      padding: 15px;
+      max-width: 100%;
+  }
+
+  .web-of-science-publication-title {
+      font-size: 1.5rem;
+  }
+
+  .web-of-science-publication-authors,
+  .web-of-science-publication-date,
+  .web-of-science-publication-journal {
+      font-size: 0.9rem;
+  }
+
+  .filter-sort-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+}
