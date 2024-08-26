@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import './DisplayPapers.css';
 import ExportButton from "./ExportButton";
+import DownloadWordButton from './DownloadWordButton'
 
 const DisplayPapers = () => {
   const [scholarData, setScholarData] = useState([]);
@@ -49,8 +50,6 @@ const DisplayPapers = () => {
     setFilteredData(sortedData);
   };
 
-
-
   const handleDownloadPDF = () => {
     window.print();
   };
@@ -59,7 +58,8 @@ const DisplayPapers = () => {
     <div className="container">
       <h1 className="main-title">Google Scholar Data</h1>
 
-      
+            <p>number of papers : {filteredData.length}</p>
+
 
       {error && <p className="error no-print">Error: {error}</p>}
 
@@ -92,9 +92,9 @@ const DisplayPapers = () => {
           </select>
         </div>
         <div className="button-container no-print">
-          <button onClick={handleDownloadPDF} className="download-button">Download PDF</button>
+          <DownloadWordButton publications={filteredData} />
         </div>
-        <ExportButton data={filteredData}/>
+        <ExportButton data={filteredData} filename="google_scholar_data.xlsx"/>
       </div>
 
       <div className="scholar-item-container">

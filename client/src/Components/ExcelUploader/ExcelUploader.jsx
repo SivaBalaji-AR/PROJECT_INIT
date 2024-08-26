@@ -45,7 +45,7 @@ const ExcelUploader = () => {
             if (selectedData) {
                 try {
                     // Send Google Scholar URL
-                    await fetch('/api/scrape/googlescholar', {
+                    await fetch('http://localhost:8000/api/scrape/googlescholar', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ const ExcelUploader = () => {
                     });
 
                     // Send Web of Science URL
-                    await fetch('/api/scrape/webofscience', {
+                    await fetch('http://localhost:8000/api/scrape/webofscience', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

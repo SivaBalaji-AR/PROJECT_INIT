@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import ExportButton from './ExportButton';
 import './DisplayWebOfScience.css';
+import DownloadWordButton from './DownloadWordButton'
+
 
 const DisplayWebOfScience = () => {
   const [data, setData] = useState([]);
@@ -55,7 +57,7 @@ const DisplayWebOfScience = () => {
   };
 
   const generateYearOptions = () => {
-    const startYear = 1900;
+    const startYear = 2000;
     const endYear = new Date().getFullYear();
     const years = [];
 
@@ -69,6 +71,7 @@ const DisplayWebOfScience = () => {
   return (
     <div className="web-of-science-container">
       <h1 className="web-of-science-title">Web of Science Data</h1>
+      <p>number of papers : {filteredData.length}</p>
       {error && <p className="web-of-science-error">Error: {error}</p>}
       
       <div className="filter-sort-container">
@@ -100,7 +103,7 @@ const DisplayWebOfScience = () => {
             <option value="earliest">Earliest First</option>
           </select>
         </div>
-
+        <DownloadWordButton publications={filteredData} />
         <ExportButton data={filteredData} filename="web_of_science_data.xlsx" />
       </div>
       
