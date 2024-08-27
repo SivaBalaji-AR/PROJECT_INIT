@@ -7,7 +7,7 @@ const path = require("path");
 
 // Import scraping functions
 const scrapeGoogleScholar = require("./scrapers/googleSiteScraper");
-const scrapeWebOfScience = require("./scrapers/webOfScienceScraper");
+const getPublicationsByIdentifier = require("./scrapers/wosapi");
 
 const dataDir = path.join(__dirname, "data");
 
@@ -74,7 +74,7 @@ app.post("/api/scrape/webofscience", async (req, res) => {
   }
 
   try {
-    await scrapeWebOfScience(url);
+    await getPublicationsByIdentifier(url);
     res.status(200).send("Scraping Web of Science profile initiated");
   } catch (error) {
     console.error("Error during scraping:", error);

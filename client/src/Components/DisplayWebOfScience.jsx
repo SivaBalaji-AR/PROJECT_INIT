@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import ExportButton from './ExportButton';
+import ExportWos from './ExportWos';
 import './DisplayWebOfScience.css';
-import DownloadWordButton from './DownloadWordButton'
-
+import DownloadWordWos from './DownloadeWordWos';
 
 const DisplayWebOfScience = () => {
   const [data, setData] = useState([]);
@@ -16,8 +15,8 @@ const DisplayWebOfScience = () => {
     fetch('http://localhost:8000/api/v1/webofscience')
       .then(response => response.json())
       .then(data => {
-        setData(data);
-        setFilteredData(data);
+        setData(data.hits);
+        setFilteredData(data.hits);
       })
       .catch(error => setError(error.message));
   }, []);
@@ -41,15 +40,15 @@ const DisplayWebOfScience = () => {
 
   const applyFilterAndSort = (sortOrder, startYear, endYear) => {
     const filtered = data.filter(item => {
-      const publicationYear = parseInt(item.publicationDate.replace(' |', '').split('-')[0], 10);
+      const publicationYear = item.source.publishYear;
       const start = startYear ? parseInt(startYear, 10) : -Infinity;
       const end = endYear ? parseInt(endYear, 10) : Infinity;
       return publicationYear >= start && publicationYear <= end;
     });
 
     const sorted = filtered.sort((a, b) => {
-      const dateA = new Date(a.publicationDate.replace(' |', ''));
-      const dateB = new Date(b.publicationDate.replace(' |', ''));
+      const dateA = new Date(`${a.source.publishYear}-${a.source.publishMonth}-01`);
+      const dateB = new Date(`${b.source.publishYear}-${b.source.publishMonth}-01`);
       return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
     });
 
@@ -71,7 +70,7 @@ const DisplayWebOfScience = () => {
   return (
     <div className="web-of-science-container">
       <h1 className="web-of-science-title">Web of Science Data</h1>
-      <p>number of papers : {filteredData.length}</p>
+      <p>Number of papers: {filteredData.length}</p>
       {error && <p className="web-of-science-error">Error: {error}</p>}
       
       <div className="filter-sort-container">
@@ -103,8 +102,8 @@ const DisplayWebOfScience = () => {
             <option value="earliest">Earliest First</option>
           </select>
         </div>
-        <DownloadWordButton publications={filteredData} />
-        <ExportButton data={filteredData} filename="web_of_science_data.xlsx" />
+        <DownloadWordWos publications={filteredData} />
+        <ExportWos data={filteredData} filename="web_of_science_data.xlsx" />
       </div>
       
       <div className="web-of-science-publication-list">
@@ -112,10 +111,19 @@ const DisplayWebOfScience = () => {
           filteredData.map((item, index) => (
             <div key={index} className="web-of-science-publication-item">
               <h4 className="web-of-science-publication-title">{item.title}</h4>
-              <p className="web-of-science-publication-authors"><strong>Authors: </strong>{item.authors}</p>
-              <p className="web-of-science-publication-date"><strong>Published Date: </strong>{item.publicationDate.replace(' |', '')}</p>
-              <p className="web-of-science-publication-journal"><strong>Journal: </strong>{item.journal}</p>
-              <a href={item.link} target="_blank" rel="noopener noreferrer" className="web-of-science-publication-link">View Full Record</a>
+              <p className="web-of-science-publication-authors">
+                <strong>Authors: </strong>{item.names.authors.map(author => author.displayName).join(' | ')}
+              </p>
+              <p className="web-of-science-publication-date">
+                <strong>Published Date: </strong>{item.source.publishMonth} {item.source.publishYear}
+              </p>
+              <p className="web-of-science-publication-journal">
+                <strong>Journal: </strong>{item.source.sourceTitle}
+              </p>
+              <p className="web-of-science-publication-pages">
+                <strong>Pages: </strong>{item.source.pages.range}
+              </p>
+              <a href={item.links.record} target="_blank" rel="noopener noreferrer" className="web-of-science-publication-link">View Full Record</a>
             </div>
           ))
         ) : (

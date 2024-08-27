@@ -30,25 +30,73 @@ const DisplayPapers = () => {
       });
   }, []);
 
-  const handleFilter = () => {
-    const filtered = scholarData.filter((item) => {
-      const itemDate = new Date(item.publicationDate);
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      return itemDate >= start && itemDate <= end;
-    });
-    setFilteredData(filtered);
-  };
+ const handleFilter = () => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
 
-  const handleSort = (order) => {
-    setSortOrder(order);
-    const sortedData = [...filteredData].sort((a, b) => {
-      const dateA = new Date(a.publicationDate);
-      const dateB = new Date(b.publicationDate);
-      return order === "latest" ? dateB - dateA : dateA - dateB;
-    });
-    setFilteredData(sortedData);
-  };
+  // Ensure start and end dates are valid
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    console.error("Invalid start or end date.");
+    return;
+  }
+  
+  const filtered = scholarData.filter((item) => {
+    const itemDate = parseDate(item.publication_date);
+    // Skip entries with invalid dates
+    if (isNaN(itemDate.getTime())) {
+      console.warn('Skipping entry with invalid date:', item.publication_date);
+      return false;
+    }
+    return itemDate >= start && itemDate <= end;
+  });
+  
+  setFilteredData(filtered);
+};
+
+
+
+const parseDate = (dateString) => {
+  if (!dateString || typeof dateString !== 'string') {
+    console.error('Invalid date string:', dateString);
+    return new Date(NaN);
+  }
+
+  const dateParts = dateString.split('/');
+  
+  if (dateParts.length === 3) { // yyyy/mm/dd
+    return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+  } else if (dateParts.length === 2) { // yyyy/mm
+    return new Date(dateParts[0], dateParts[1] - 1);
+  } else if (dateParts.length === 1) { // yyyy
+    return new Date(dateParts[0], 0); // January
+  } else {
+    console.error('Unexpected date format:', dateString);
+    return new Date(NaN);
+  }
+};
+
+
+
+const handleSort = (order) => {
+  setSortOrder(order);
+  
+  const sortedData = [...filteredData].sort((a, b) => {
+    const dateA = parseDate(a.publication_date);
+    const dateB = parseDate(b.publication_date);
+    
+    // Skip entries with invalid dates
+    if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+      console.warn('Skipping entry with invalid date:', a.publication_date, b.publication_date);
+      return 0; // Consider invalid dates as equal
+    }
+    
+    return order === "latest" ? dateB - dateA : dateA - dateB;
+  });
+  
+  setFilteredData(sortedData);
+};
+
+
 
   const handleDownloadPDF = () => {
     window.print();
