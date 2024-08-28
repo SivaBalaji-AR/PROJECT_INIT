@@ -15,8 +15,8 @@ const DisplayWebOfScience = () => {
     fetch('http://localhost:8000/api/v1/webofscience')
       .then(response => response.json())
       .then(data => {
-        setData(data.hits);
-        setFilteredData(data.hits);
+        setData(data);
+        setFilteredData(data);
       })
       .catch(error => setError(error.message));
   }, []);
@@ -70,7 +70,7 @@ const DisplayWebOfScience = () => {
   return (
     <div className="web-of-science-container">
       <h1 className="web-of-science-title">Web of Science Data</h1>
-      <p>Number of papers: {filteredData.length}</p>
+      <p>Number of papers: {filteredData ? filteredData.length : 0}</p>
       {error && <p className="web-of-science-error">Error: {error}</p>}
       
       <div className="filter-sort-container">
@@ -107,28 +107,35 @@ const DisplayWebOfScience = () => {
       </div>
       
       <div className="web-of-science-publication-list">
-        {filteredData.length > 0 ? (
-          filteredData.map((item, index) => (
-            <div key={index} className="web-of-science-publication-item">
-              <h4 className="web-of-science-publication-title">{item.title}</h4>
-              <p className="web-of-science-publication-authors">
-                <strong>Authors: </strong>{item.names.authors.map(author => author.displayName).join(' | ')}
-              </p>
-              <p className="web-of-science-publication-date">
-                <strong>Published Date: </strong>{item.source.publishMonth} {item.source.publishYear}
-              </p>
-              <p className="web-of-science-publication-journal">
-                <strong>Journal: </strong>{item.source.sourceTitle}
-              </p>
-              <p className="web-of-science-publication-pages">
-                <strong>Pages: </strong>{item.source.pages.range}
-              </p>
-              <a href={item.links.record} target="_blank" rel="noopener noreferrer" className="web-of-science-publication-link">View Full Record</a>
-            </div>
-          ))
-        ) : (
-          <p className="web-of-science-no-data">No Web of Science data available</p>
-        )}
+        {filteredData && filteredData.length > 0 ? (
+  filteredData.map((item, index) => (
+    <div key={index} className="web-of-science-publication-item">
+      <h4 className="web-of-science-publication-title">{item.title}</h4>
+      {item.names && item.names.authors && (
+        <p className="web-of-science-publication-authors">
+          <strong>Authors: </strong>{item.names.authors.map(author => author.displayName).join(' | ')}
+        </p>
+      )}
+      {item.source && (
+        <>
+          <p className="web-of-science-publication-date">
+            <strong>Published Date: </strong>{item.source.publishMonth} {item.source.publishYear}
+          </p>
+          <p className="web-of-science-publication-journal">
+            <strong>Journal: </strong>{item.source.sourceTitle}
+          </p>
+          <p className="web-of-science-publication-pages">
+            <strong>Pages: </strong>{item.source.pages ? item.source.pages.range : 'N/A'}
+          </p>
+        </>
+      )}
+      <a href={item.links.record} target="_blank" rel="noopener noreferrer" className="web-of-science-publication-link">View Full Record</a>
+    </div>
+  ))
+) : (
+  <p className="web-of-science-no-data">No Web of Science data available</p>
+)}
+
       </div>
     </div>
   );
